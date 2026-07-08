@@ -12,13 +12,14 @@
     outputs = { nixpkgs, self, ... } @ inputs:
     let
         lib = nixpkgs.lib;
+        hardening = import ./lib/hardened-service.nix;
 
         sharedModules = ./modules
             |> nixpkgs.lib.filesystem.listFilesRecursive
             |> builtins.filter (nixpkgs.lib.hasSuffix ".nix");
 
         mkSystem = hostname: lib.nixosSystem {
-            specialArgs = { inherit inputs self hostname; };
+            specialArgs = { inherit inputs self hostname hardening; };
             modules = [
                 ./systems/${hostname}/default.nix
                 ./systems/${hostname}/hardware-configuration.nix
