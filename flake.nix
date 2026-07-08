@@ -9,15 +9,26 @@
         lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    outputs = { nixpkgs, ... } @ inputs:
+    outputs = { nixpkgs, self, ... } @ inputs:
     let
+        lib = nixpkgs.lib;
+
         sharedModules = ./modules
             |> nixpkgs.lib.filesystem.listFilesRecursive
             |> builtins.filter (nixpkgs.lib.hasSuffix ".nix");
-    in {
-        nixosConfigurations.dorg = nixpkgs.lib.nixosSystem {
-            specialArgs = { inherit inputs; };
-            modules = [ ./hardware-configuration.nix ] ++ sharedModules;
+
+        mkSystem = hostname: lib.nixosSystem {
+            specialArgs = { inherit inputs self hostname; };
+            modules = [
+                ./systems/${hostname}/default.nix
+                ./systems/${hostname}/hardware-configuration.nix
+            ] ++ sharedModules;
         };
+
+    in {
+        nixosConfigurations = lib.readDir ./systems
+            |> lib.attrNames
+            |> map (n: { name = n; value = mkSystem n; })
+            |> lib.listToAttrs;
     };
 }
