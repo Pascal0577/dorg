@@ -3,8 +3,7 @@
 {
     imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
 
-    
-    lanzaboote = {
+    boot.lanzaboote = {
         enable = true;
         pkiBundle = "/var/lib/sbctl";
         autoGenerateKeys.enable = true;
