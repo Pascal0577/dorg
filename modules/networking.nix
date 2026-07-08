@@ -2,7 +2,7 @@
     systemd.network.enable = true;
 
     networking = {
-        hostName = "pi";
+        hostName = "dorg";
         useNetworkd = true;
         firewall = {
             enable = true;
