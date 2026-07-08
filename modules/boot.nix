@@ -6,7 +6,7 @@
     boot = {
         initrd.systemd.enable = true;
         supportedFilesystems = [ "zfs" ];
-        kernelPackages = pkgs.linuxKernel.packages.linux_6_18.kernel;
+        kernelPackages = pkgs.linuxKernel.packages.linux_6_18;
 
         loader = {
             efi.canTouchEfiVariables = true;
