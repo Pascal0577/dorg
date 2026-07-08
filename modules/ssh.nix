@@ -1,0 +1,53 @@
+{
+    # add more here
+    users.users.dorg.openssh.authorizedKeys.keys = [
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcq68JNj92VwwUXhtxLw/yfDStY2dgroWJC3WQIFErx pascal@acer"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG/wHEHpwkF1VwCS/MxZf2cvECIeUHdbiLjO1J1jz0LL pascal@lenovo"
+    ];
+
+    services.openssh = {
+        enable = true;
+        settings = {
+            PasswordAuthentication = false;
+            PermitRootLogin = "no";
+            StrictModes = true;
+        };
+    };
+    
+    systemd.services.sshd.serviceConfig = {
+        StandardError = "journal+console";
+        NoNewPrivileges = true;
+        ProtectSystem = "full";
+        ProtectClock = true;
+        ProtectHostname = true;
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectKernelLogs = true;
+        ProtectControlGroups = true;
+        ProtectProc = "invisible";
+        PrivateTmp = true;
+        PrivateMounts = true;
+        PrivateDevices = true;
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+        MemoryDenyWriteExecute = true;
+        LockPersonality = true;
+        DevicePolicy = "closed";
+        SystemCallArchitectures = "native";
+        SystemCallFilter = [
+          "~@keyring"
+          "~@swap"
+          "~@clock"
+          "~@module"
+          "~@obsolete"
+          "~@cpu-emulation"
+          "~@debug"
+        ];
+        CapabilityBoundingSet = [
+            "~CAP_SETPCAP"
+            "~CAP_SYS_PTRACE"
+        ];
+    };
+}
+
