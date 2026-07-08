@@ -12,7 +12,7 @@
     outputs = { nixpkgs, self, ... } @ inputs:
     let
         lib = nixpkgs.lib;
-        hardening = import ./lib/hardened-service.nix;
+        hardening = import ./lib/hardened-service.nix { inherit lib; };
 
         sharedModules = ./modules
             |> nixpkgs.lib.filesystem.listFilesRecursive
