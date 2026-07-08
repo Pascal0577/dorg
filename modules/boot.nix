@@ -1,25 +1,12 @@
-{ pkgs, inputs, config, lib, ... }:
-let
-    kernelAttrs = config.boot.zfs.package.kernelModuleAttribute;
+{ pkgs, inputs, ... }:
 
-    zfsCompatibleKernelPackages = lib.filterAttrs (name: kernelPackages:
-        (builtins.match "linux_[0-9]+_[0-9]+" name) != null
-        && (builtins.tryEval kernelPackages).success
-        && (!kernelPackages.${kernelAttrs}.meta.broken)
-    ) pkgs.linuxKernel.packages;
-
-    latestZfsKernel = zfsCompatibleKernelPackages
-        |> builtins.attrValues 
-        |> lib.sort (a: b: lib.versionOlder a.kernel.version b.kernel.version)
-        |> lib.last;
-in
 {
     imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
 
     boot = {
         initrd.systemd.enable = true;
         supportedFilesystems = [ "zfs" ];
-        kernelPackages = latestZfsKernel;
+        kernelPackages = pkgs.linuxKernel.packages.linux_6_18.kernel;
 
         loader = {
             efi.canTouchEfiVariables = true;
