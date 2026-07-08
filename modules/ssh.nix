@@ -3,6 +3,7 @@
     users.users.dorg.openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINcq68JNj92VwwUXhtxLw/yfDStY2dgroWJC3WQIFErx pascal@acer"
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG/wHEHpwkF1VwCS/MxZf2cvECIeUHdbiLjO1J1jz0LL pascal@lenovo"
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKj6w6wXEkphs7eJ28xpW23J4fYvHHBwDKybXGS6B7Ox armaku"
     ];
 
     services.openssh = {
