@@ -1,24 +1,11 @@
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 
 {
-    imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
-
     boot = {
         initrd.systemd.enable = true;
         supportedFilesystems = [ "zfs" ];
         kernelPackages = pkgs.linuxKernel.packages.linux_6_18;
-
-        loader = {
-            efi.canTouchEfiVariables = true;
-            systemd-boot.enable = false;
-        };
-
-        lanzaboote = {
-            enable = true;
-            pkiBundle = "/var/lib/sbctl";
-            autoGenerateKeys.enable = true;
-            autoEnrollKeys.enable = true;
-        };
+        loader.efi.canTouchEfiVariables = true;
 
         kernel.sysctl = {
             "kernel.sched_cfs_bandwidth_slice_us" = 3000;
@@ -36,12 +23,3 @@
         ];
     };
 }
-
-# More work needs to be done if I want to enable secure boot.
-# Here's a quick summary of what I need to do:
-# sudo nix-shell -p sbctl
-# sudo sbctl create-keys
-# Clear all the secure boot keys in the UEFI and enable secure boot there
-# sudo sbctl enroll-keys --microsoft
-# Re-enable secure boot in UEFI if needed
-
