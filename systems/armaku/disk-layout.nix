@@ -95,7 +95,7 @@
 
                 "local/containers/xmpp" = {
                     type = "zfs_fs";
-                    mountpoint = "/var/lib/nixos-containers";
+                    mountpoint = "/var/lib/nixos-containers/xmpp";
                     options = {
                         recordsize = "32K";
                         "com.sun:auto-snapshot" = "true";
