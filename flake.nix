@@ -18,6 +18,10 @@
             |> nixpkgs.lib.filesystem.listFilesRecursive
             |> builtins.filter (nixpkgs.lib.hasSuffix ".nix");
 
+        securityModules = ./modules/security
+            |> nixpkgs.lib.filesystem.listFilesRecursive
+            |> builtins.filter (nixpkgs.lib.hasSuffix ".nix");
+
         mkSystem = hostname: lib.nixosSystem {
             specialArgs = { inherit inputs self hostname hardening; };
             modules = [
@@ -31,5 +35,7 @@
             |> lib.attrNames
             |> map (n: { name = n; value = mkSystem n; })
             |> lib.listToAttrs;
+
+        nixosModules.security = { imports = securityModules; };
     };
 }
