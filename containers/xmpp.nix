@@ -11,6 +11,17 @@ in
         trustedInterfaces = [ "ve-xmpp" ];
     };
 
+    networking.nat = {
+        enable = true;
+        internalInterfaces = [ "ve-xmpp" ];
+        externalInterface = "eth0";
+        forwardPorts = [
+            { sourcePort = 5280; proto = "tcp"; destination = "10.0.0.2:5290"; }
+            { sourcePort = 5222; proto = "tcp"; destination = "10.0.0.2:5222"; }
+            { sourcePort = 5269; proto = "tcp"; destination = "10.0.0.2:5269"; }
+        ];
+    };
+
     security.acme = {
         acceptTerms = true;
         defaults.email = ""; # TODO
@@ -41,12 +52,6 @@ in
         hostAddress = "10.0.0.1";
         localAddress = "10.0.0.2";
         specialArgs = { inherit hardening; };
-
-        forwardPorts = [
-            { hostPort = 5222; containerPort = 5222; protocol = "tcp"; } # c2s
-            { hostPort = 5269; containerPort = 5269; protocol = "tcp"; } # s2s
-            { hostPort = 5281; containerPort = 5281; protocol = "tcp"; } # BOSH/websocket (legacy_ssl)
-        ];
 
         bindMounts = {
             "/certs" = {
