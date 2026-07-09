@@ -83,12 +83,6 @@
                     };
                 };
 
-                "local/persist" = {
-                    type = "zfs_fs";
-                    mountpoint = "/persist";
-                    options."com.sun:auto-snapshot" = "false";
-                };
-
                 "local/media" = {
                     type = "zfs_fs";
                     mountpoint = "/srv/media";
@@ -112,7 +106,6 @@
                     type = "zfs_fs";
                     mountpoint = "/";
                     options."com.sun:auto-snapshot" = "false";
-                    postCreateHook = "zfs list -t snapshot -H -o name | grep -E '^zroot/local/root@blank$' || zfs snapshot zroot/local/root@blank";
                 };
             };
         };
