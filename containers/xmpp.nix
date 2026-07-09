@@ -25,6 +25,7 @@ in
 
         config = {
             imports = [
+                { system.stateVersion = "26.05"; }
                 self.nixosModules.security
                 (modulesPath + "/profiles/minimal.nix")
                 (modulesPath + "/profiles/headless.nix")
