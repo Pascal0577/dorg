@@ -33,4 +33,13 @@
         dhcpV4Config.RouteMetric = 10;
         linkConfig.RequiredForOnline = "routable";
     };
+
+    # refuse to handle virtual devices
+    systemd.network.networks."10-ve" = {
+        matchConfig.Name = "ve-*";
+        networkConfig = {
+            DHCP = "no";
+            LinkLocalAddressing = "no";
+        };
+    };
 }
