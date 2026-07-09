@@ -36,6 +36,9 @@
             |> map (n: { name = n; value = mkSystem n; })
             |> lib.listToAttrs;
 
-        nixosModules.security = { imports = securityModules; };
+        nixosModules = {
+            security = { imports = securityModules; };
+            xmpp = { imports = [ ./containers/xmpp.nix ]; };
+        };
     };
 }
