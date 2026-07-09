@@ -1,4 +1,4 @@
-{ self, lib, ... }:
+{ self, lib, modulesPath, ... }:
 let
     hardening = import ../lib/hardened-service.nix { inherit lib; };
 in
@@ -23,16 +23,22 @@ in
         autoStart = true;
         ephemeral = false;
         privateNetwork = true;
-        privateUsers = "pick";
         restartIfChanged = true;
         hostAddress = "10.0.0.1";
         localAddress = "10.0.0.2";
         specialArgs = { inherit hardening; };
 
         config = {
-            imports = [ self.nixosModules.security ];
+            imports = [
+                self.nixosModules.security
+                (modulesPath + "/profiles/minimal.nix")
+                (modulesPath + "/profiles/headless.nix")
+            ];
 
-            services.prosody.enable = true;
+            services.prosody = {
+                enable = true;
+                xmppComplianceSuite = false;
+            };
         };
     };
 }
