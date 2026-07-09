@@ -11,9 +11,20 @@ in
         trustedInterfaces = [ "ve-xmpp" ];
     };
 
+    networking.nat = {
+        enable = true;
+        internalInterfaces = [ "ve-xmpp" ];
+        externalInterface = "eth0";
+        forwardPorts = [
+            { sourcePort = 5281; proto = "tcp"; destination = "10.0.0.2:5281"; }
+            { sourcePort = 5222; proto = "tcp"; destination = "10.0.0.2:5222"; }
+            { sourcePort = 5269; proto = "tcp"; destination = "10.0.0.2:5269"; }
+        ];
+    };
+
     security.acme = {
         acceptTerms = true;
-        defaults.email = ""; # TODO
+        defaults.email = "pascalthederg@gmail.com";
         certs.${domain} = {
             group = "certs";
             webroot = "/var/lib/acme/acme-challenge";
@@ -22,7 +33,8 @@ in
         };
     };
 
-    users.groups.certs.members = [ "nginx" "prosody" ];
+    users.groups.certs.members = [ "nginx" ];
+    users.groups.certs.gid = 999;
 
     # We need nginx to serve the acme challenge files for domain verification
     services.nginx = {
@@ -37,16 +49,11 @@ in
         autoStart = true;
         ephemeral = false;
         privateNetwork = true;
+        privateUsers = 0;
         restartIfChanged = true;
         hostAddress = "10.0.0.1";
         localAddress = "10.0.0.2";
         specialArgs = { inherit hardening; };
-
-        forwardPorts = [
-            { hostPort = 5222; containerPort = 5222; protocol = "tcp"; } # c2s
-            { hostPort = 5269; containerPort = 5269; protocol = "tcp"; } # s2s
-            { hostPort = 5281; containerPort = 5281; protocol = "tcp"; } # BOSH/websocket (legacy_ssl)
-        ];
 
         bindMounts = {
             "/certs" = {
@@ -67,7 +74,24 @@ in
                 (modulesPath + "/profiles/headless.nix")
             ];
 
-            users.groups.certs.members = [ "nginx" "prosody" ];
+            users.groups.certs.members = [ "prosody" ];
+            users.groups.certs.gid = 999;
+
+            networking.useHostResolvConf = lib.mkForce false;
+            networking.firewall = {
+                enable = true;
+                allowedTCPPorts = [ 5222 5269 5280 5281 ];
+            };
+
+            services.resolved = {
+                enable = true;
+                settings.Resolve = {
+                    DNS = "9.9.9.9#dns.quad9.net";
+                    FallbackDNS = "1.1.1.1#cloudflare-dns.com 8.8.8.8#dns.google";
+                    DNSSEC = "allow-downgrade";
+                    DNSOverTLS = true;
+                };
+            };
 
             services.prosody = {
                 enable = true;
