@@ -7,7 +7,7 @@ A flake-based NixOS configuration managing a set of hardened, ZFS-backed headles
 This repository defines the system configuration for two hosts:
 
 ### armaku
-- Single AirDisk 512GB SSD, GPT partitioned into ESP / swap (randomly-encrypted) / LUKS-encrypted root.
+- Single AirDisk 240GB SSD, GPT partitioned into ESP / swap (randomly-encrypted) / LUKS-encrypted root.
 - ZFS pool `zroot` on top of LUKS, with datasets for `/nix`, `/srv/media` (large recordsize, no compression), and an XMPP container dataset.
 - Probably has more reliable uptime and faster networking than Quill. Maybe not by much
 - Has static IP
@@ -32,17 +32,20 @@ support.
 ```
 .
 ├── flake.nix                     # Entry point wires hosts + shared modules together
+├── containers/
+│   └── xmpp.nix                  # XMPP server configuration and container configuration
 ├── lib/
 │   └── hardened-service.nix      # Shared systemd sandboxing profile (hardening.mkService)
 ├── modules/                      # Shared NixOS modules, applied to every host
 │   ├── boot.nix                  # Kernel, sysctls, boot params
+│   ├── meta-settings.nix         # settings for nix
 │   ├── networking.nix            # systemd-networkd, systemd-resolved, firewall
+│   ├── reduce-closure-size.nix    
 │   ├── ssh.nix                   # hardened sshd unit service + authorized keys
 │   ├── users.nix                 # user account
 │   └── security/
 │       ├── disable-setuid.nix           # Disables sudo/su/mount setuid wrappers, uses polkit
 │       ├── disabled-kernel-modules.nix  # blacklists kernel modules used in dirtyfrag (see Security section)
-│       ├── secure-boot.nix              # lanzaboote secure boot integration
 │       └── hardened-services/           # sandboxes services
 │           ├── zfs-services.nix
 │           ├── nscd.nix
@@ -77,6 +80,9 @@ support.
   auto-enrolled keys (see the setup notes at the bottom of
   `modules/security/secure-boot.nix` for the manual `sbctl` steps required
   once).
+- The **XMPP server** defined in `containers/xmpp.nix` runs in a NixOS container upon 
+  boot. Packets are forwarded from the host to the container. `/srv/media` is bind 
+  mounted in the container for the XMPP server to access.
 
 ## Security
 
@@ -108,7 +114,7 @@ nix run github:nix-community/nixos-anywhere -- --flake .#(hostname) --target-hos
 ## Add a new host if needed
 
 1. Create `./systems/<hostname>/` with `default.nix`, `disk-layout.nix`, and `hardware-configuration.nix`.
-2. `flake.nix` will automatically pick it up — no changes needed there.
+2. `flake.nix` will automatically pick it up with no changes necessary.
 3. Add the host's SSH public key to `modules/ssh.nix` if it needs to be an authorized client, and add its own key to the user's `authorizedKeys` list if it needs SSH access to other hosts.
 
 ## Requirements
