@@ -16,10 +16,6 @@
         kernelParams = [
             "rcupdate.rcu_expedited=1"
             "page_alloc.shuffle=1"
-            "zswap.enabled=1"
-            "zswap.compressor=zstd"
-            "zswap.max_pool_percent=50"
-            "zswap.shrinker_enabled=1"
         ];
     };
 }
