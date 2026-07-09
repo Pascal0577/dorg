@@ -38,13 +38,11 @@ let
             "~@privileged"
             "~@resources"
         ];
-        CapabilityBoundingSet = [
-            "~CAP_SET(UID|GID|PCAP)"
-            "~CAP_NET_ADMIN"
-        ];
+        CapabilityBoundingSet = [ "~CAP_NET_ADMIN" ];
         RestrictAddressFamilies = [
             "AF_UNIX"
-            "~AF_(INET|INET6)"
+            "~AF_INET"
+            "~AF_INET6"
             "~AF_PACKET"
         ];
         IPAddressDeny = [ "any" ];
@@ -60,7 +58,7 @@ let
             "AF_INET6"
             "AF_PACKET"
         ];
-        CapabilityBoundingSet = [ "AF_(INET|INET6)" ];
+        CapabilityBoundingSet = [ "AF_INET" "AF_INET6" ];
     };
 in
 {
