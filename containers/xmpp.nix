@@ -33,7 +33,8 @@ in
         };
     };
 
-    users.groups.certs.members = [ "nginx" "prosody" ];
+    users.groups.certs.members = [ "nginx" ];
+    users.groups.certs.gid = 999;
 
     # We need nginx to serve the acme challenge files for domain verification
     services.nginx = {
@@ -48,6 +49,7 @@ in
         autoStart = true;
         ephemeral = false;
         privateNetwork = true;
+        privateUsers = 0;
         restartIfChanged = true;
         hostAddress = "10.0.0.1";
         localAddress = "10.0.0.2";
@@ -72,7 +74,8 @@ in
                 (modulesPath + "/profiles/headless.nix")
             ];
 
-            users.groups.certs.members = [ "nginx" "prosody" ];
+            users.groups.certs.members = [ "prosody" ];
+            users.groups.certs.gid = 999;
 
             networking.useHostResolvConf = lib.mkForce false;
             networking.firewall = {
