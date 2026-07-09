@@ -29,7 +29,6 @@
                 ./systems/${hostname}/hardware-configuration.nix
             ] ++ sharedModules;
         };
-
     in {
         nixosConfigurations = lib.readDir ./systems
             |> lib.attrNames
@@ -38,7 +37,10 @@
 
         nixosModules = {
             security = { imports = securityModules; };
-            xmpp = { imports = [ ./containers/xmpp.nix ]; };
+            xmpp = {
+                imports = [ ./containers/xmpp.nix ];
+                _module.args.xmppFlake = self;
+            };
         };
     };
 }

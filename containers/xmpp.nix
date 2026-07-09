@@ -1,4 +1,4 @@
-{ self, lib, modulesPath, ... }:
+{ xmppFlake, lib, modulesPath, ... }:
 let
     hardening = import ../lib/hardened-service.nix { inherit lib; };
     domain = "xmpp.dorg.com";
@@ -62,7 +62,7 @@ in
         config = {
             imports = [
                 { system.stateVersion = "26.05"; }
-                self.nixosModules.security
+                xmppFlake.nixosModules.security
                 (modulesPath + "/profiles/minimal.nix")
                 (modulesPath + "/profiles/headless.nix")
             ];
