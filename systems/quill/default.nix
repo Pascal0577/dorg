@@ -1,3 +1,8 @@
+{ self, ... }:
+
 {
-    imports = [ ./disk-layout.nix ];
+    imports = [
+        ./disk-layout.nix
+        self.nixosModules.xmpp
+    ];
 }
