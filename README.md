@@ -108,10 +108,7 @@ nixos-rebuild switch --flake .#armaku --target-host dorg@(hostname) --ask-elevat
 To install/deploy for the first time on a machine:
 
 ```bash
-nix run github:nix-community/nixos-anywhere -- \
-  --flake .#[hostname] \
-  --disk-encryption-keys /run/zfs_xmpp.key <(sops -d --extract '["zfs_xmpp_key"]' secrets/[hostname].yaml) \
-  --target-host root@[ip]
+nix run .#deploy-[hostname] [ip-address]
 ```
 
 ## Add a new host if needed
