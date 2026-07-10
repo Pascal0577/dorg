@@ -110,7 +110,7 @@ To install/deploy for the first time on a machine:
 ```bash
 nix run github:nix-community/nixos-anywhere -- \
   --flake .#[hostname] \
-  --disk-encryption-keys /etc/ssh/ssh_host_ed25519_key <(sops -d --extract '["age_key"]' secrets/[hostname].yaml) \
+  --disk-encryption-keys /run/zfs_xmpp.key <(sops -d --extract '["zfs_xmpp_key"]' secrets/[hostname].yaml) \
   --target-host root@[ip]
 ```
 

@@ -80,7 +80,12 @@
                 "local/containers/xmpp" = {
                     type = "zfs_fs";
                     mountpoint = "/var/lib/nixos-containers/xmpp";
-                    options."com.sun:auto-snapshot" = "true";
+                    options = {
+                        encryption = "aes-256-gcm";
+                        keyformat = "hex";
+                        keylocation = "file:///run/zfs_xmpp.key";
+                        "com.sun:auto-snapshot" = "true";
+                    };
                 };
 
                 "local/root" = {

@@ -12,6 +12,12 @@
                 neededForUsers = true;
                 owner = "root";
             };
+
+            "zfs_xmpp_key" = {
+                path = "/run/zfs_xmpp.key";
+                owner = "root";
+                mode = "0400";
+            };
         };
     };
 }
