@@ -1,8 +1,11 @@
+{ hostname, ... }:
+
+
 {
     systemd.network.enable = true;
 
     networking = {
-        hostName = "dorg";
+        hostName = hostname;
         useNetworkd = true;
         firewall = {
             enable = true;
