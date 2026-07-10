@@ -102,13 +102,16 @@ Build or switch a specific host (from a machine with this flake and appropriate 
 nixos-rebuild build --flake .#(hostname)
 
 # Deploy to a remote host
-nixos-rebuild switch --flake .#armaku --target-host dorg@(hostname) -ask-elevate-password --elevate=run0
+nixos-rebuild switch --flake .#armaku --target-host dorg@(hostname) --ask-elevate-password --elevate=run0
 ```
 
 To install/deploy for the first time on a machine:
 
 ```bash
-nix run github:nix-community/nixos-anywhere -- --flake .#(hostname) --target-host root@(ip)
+nix run github:nix-community/nixos-anywhere -- \
+  --flake .#[hostname] \
+  --disk-encryption-keys /etc/ssh/ssh_host_ed25519_key <(sops -d --extract '["age_key"]' secrets/[hostname].yaml) \
+  --target-host root@[ip]
 ```
 
 ## Add a new host if needed

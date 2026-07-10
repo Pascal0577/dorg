@@ -1,6 +1,8 @@
+{ config, ... }:
+
 {
     users.users.dorg = {
-        initialHashedPassword = "$y$j9T$YzObaOLT0bL9jg80m89MF0$zBiJafeF83tn7gJDB6dWqCluDeXcOcnh.mC04N6Rdf7";
+        hashedPasswordFile = config.sops.secrets."password".path;
         isNormalUser = true;
         extraGroups = [ "wheel" ];
     };

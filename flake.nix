@@ -7,9 +7,12 @@
 
         lanzaboote.url = "github:nix-community/lanzaboote";
         lanzaboote.inputs.nixpkgs.follows = "nixpkgs";
+
+        sops-nix.url = "github:Mic92/sops-nix";
+        sops-nix.inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    outputs = { nixpkgs, self, ... } @ inputs:
+    outputs = { self, nixpkgs, sops-nix, ... } @ inputs:
     let
         lib = nixpkgs.lib;
         hardening = import ./lib/hardened-service.nix { inherit lib; };
@@ -25,6 +28,7 @@
         mkSystem = hostname: lib.nixosSystem {
             specialArgs = { inherit inputs self hostname hardening; };
             modules = [
+                sops-nix.nixosModules.sops
                 ./systems/${hostname}/default.nix
                 ./systems/${hostname}/hardware-configuration.nix
             ] ++ sharedModules;
