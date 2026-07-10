@@ -37,14 +37,8 @@
                     root = {
                         size = "100%";
                         content = {
-                            type = "luks";
-                            name = "cryptroot";
-                            settings.allowDiscards = true;
-                            settings.bypassWorkqueues = true;
-                            content = {
-                                type = "zfs";
-                                pool = "zroot";
-                            };
+                            type = "zfs";
+                            pool = "zroot";
                         };
                     };
                 };
