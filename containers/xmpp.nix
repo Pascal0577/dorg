@@ -100,10 +100,25 @@ in
                 };
             };
 
+            # TODO implement proper auth fail and room join rate limits
+            environment.etc."prosody/firewall/rules.pfw".text = ''
+                %RATE normal: 2 (burst 3)
+                KIND: message
+                LIMIT: normal
+                BOUNCE=policy-violation (Sending too fast!)
+            '';
+
             services.prosody = {
                 enable = true;
+                package = pkgs.prosody.override {
+                    withCommunityModules = [ "firewall" ];
+                };
                 admins = [ "admin@${domain}" ];
                 allowRegistration = false;
+
+                extraConfig = ''
+                    firewall_scripts = { "/etc/prosody/firewall/rules.pfw" }
+                '';
 
                 ssl = {
                     cert = "/certs/fullchain.pem";
