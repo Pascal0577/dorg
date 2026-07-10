@@ -7,11 +7,7 @@ let
     uploadDomain = "upload.${domain}";
 in
 {
-    networking.firewall = {
-        allowedTCPPorts = [ 80 443 5281 5222 5269 ];
-        trustedInterfaces = [ "ve-xmpp" ];
-    };
-
+    networking.firewall.allowedTCPPorts = [ 80 443 5281 5222 5269 ];
     networking.nat = {
         enable = true;
         internalInterfaces = [ "ve-xmpp" ];
@@ -91,7 +87,7 @@ in
             networking.useHostResolvConf = lib.mkForce false;
             networking.firewall = {
                 enable = true;
-                allowedTCPPorts = [ 5222 5269 5280 5281 ];
+                allowedTCPPorts = [ 5222 5269 5281 ];
             };
 
             services.resolved = {
