@@ -1,6 +1,7 @@
-{ xmppFlake, lib, modulesPath, ... }:
+{ xmppFlake, lib, modulesPath, pkgs, ... }:
 let
     hardening = import ../lib/hardened-service.nix { inherit lib; };
+    uidOffset = 1000000;
     domain = "xmpp.dorg.com";
     mucDomain = "conference.${domain}";
     uploadDomain = "upload.${domain}";
@@ -34,7 +35,7 @@ in
     };
 
     users.groups.certs.members = [ "nginx" ];
-    users.groups.certs.gid = 999;
+    users.groups.certs.gid = uidOffset + 999;
 
     # We need nginx to serve the acme challenge files for domain verification
     services.nginx = {
@@ -45,11 +46,21 @@ in
         };
     };
 
+    # Make sure root in container has proper perms
+    systemd.services."container@xmpp".serviceConfig.ExecStartPre = [
+        "${pkgs.writeShellScript "xmpp-container-chown" ''
+            set -e
+            DIR=/var/lib/nixos-containers/xmpp
+            mkdir -p "$DIR"
+            chown -R ${lib.toString uidOffset}:${lib.toString uidOffset} "$DIR"
+        ''}"
+    ];
+
     containers.xmpp = {
         autoStart = true;
         ephemeral = false;
         privateNetwork = true;
-        privateUsers = 0;
+        privateUsers = uidOffset;
         restartIfChanged = true;
         hostAddress = "10.0.0.1";
         localAddress = "10.0.0.2";
