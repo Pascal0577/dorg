@@ -153,22 +153,10 @@
                     options.mountpoint = "none";
                 };
 
-                "local/media" = {
-                    type = "zfs_fs";
-                    mountpoint = "/srv/media";
-                    options = {
-                        recordsize = "1M";
-                        "com.sun:auto-snapshot" = "false";
-                    };
-                };
-
                 "local/containers/xmpp" = {
                     type = "zfs_fs";
                     mountpoint = "/var/lib/nixos-containers/xmpp";
-                    options = {
-                        recordsize = "32K";
-                        "com.sun:auto-snapshot" = "true";
-                    };
+                    options."com.sun:auto-snapshot" = "true";
                 };
             };
         };

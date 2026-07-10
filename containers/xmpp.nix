@@ -67,10 +67,6 @@ in
                 hostPath = "/var/lib/acme/${domain}";
                 isReadOnly = false;
             };
-            "/media" = {
-                hostPath = "/srv/media";
-                isReadOnly = false;
-            };
         };
 
         config = {
