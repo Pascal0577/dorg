@@ -57,7 +57,7 @@
                 --disk-encryption-keys /run/zfs_xmpp.key <(echo "$zfs_key") \
                 --target-host root@"$ip_addr"
 
-            age_key=$("$sops_path" -d --extract '["${hostname}_age_key"]' secrets/${hostname}.yaml)
+            age_key=$("$sops_path" -d --extract '["age_key"]' secrets/${hostname}.yaml)
             if [ -z "$age_key" ]; then
                 echo "ERROR: failed to extract ${hostname}_age_key from secrets/${hostname}.yaml" >&2
                 exit 1
