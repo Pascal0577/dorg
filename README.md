@@ -4,14 +4,7 @@ A flake-based NixOS configuration managing a set of hardened, ZFS-backed headles
 
 ## Overview
 
-This repository defines the system configuration for two hosts:
-
-### armaku
-- Single AirDisk 240GB SSD, GPT partitioned into ESP / swap (randomly-encrypted) / LUKS-encrypted root.
-- ZFS pool `zroot` on top of LUKS, with datasets for `/nix`, `/srv/media` (large recordsize, no compression), and an XMPP container dataset.
-- Probably has more reliable uptime and faster networking than Quill. Maybe not by much
-- Has static IP
-- Low storage (240GB)
+This repository defines the system configuration:
 
 ### quill
 - Separate boot disk (`zboot`: ESP + swap + ZFS root/nix) and three 8TB drives in a RAIDZ1 pool (`zdata`) for bulk storage and container data.
@@ -51,14 +44,10 @@ support.
 │           ├── nscd.nix
 │           └── acpid.nix
 └── systems/
-    ├── armaku/
-    │   ├── default.nix                 # Host module imports (disk layout + minimal/perlless/headless profiles)
-    │   ├── disk-layout.nix             # disko: LUKS + single-disk ZFS layout
-    │   └── hardware-configuration.nix  # CPU/firmware/initrd settings
     └── quill/
-        ├── default.nix
+        ├── default.nix                 # Host module imports
         ├── disk-layout.nix             # disko: boot pool + 3-disk RAIDZ1 data pool
-        └── hardware-configuration.nix
+        └── hardware-configuration.nix  # CPU/firmware/initrd settings
 ```
 
 ## How It Works
@@ -102,7 +91,7 @@ Build or switch a specific host (from a machine with this flake and appropriate 
 nixos-rebuild build --flake .#(hostname)
 
 # Deploy to a remote host
-nixos-rebuild switch --flake .#armaku --target-host dorg@(hostname) --ask-elevate-password --elevate=run0
+nixos-rebuild switch --flake .#(hostname) --target-host dorg@(hostname) --ask-elevate-password --elevate=run0
 ```
 
 To install/deploy for the first time on a machine:
