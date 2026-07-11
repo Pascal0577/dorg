@@ -1,9 +1,13 @@
-{ pkgs, inputs, ... }:
+{ inputs, lib, pkgs, hostname, ... }:
 
 {
     imports = [ inputs.lanzaboote.nixosModules.lanzaboote ];
 
     boot = {
+        # don't try to decrypt volumes yet
+        # the secrets managed by sops aren't on the filesystem yet
+        zfs.requestEncryptionCredentials = "false";
+
         initrd.systemd.enable = true;
         supportedFilesystems = [ "zfs" ];
         kernelPackages = pkgs.linuxKernel.packages.linux_6_18;
@@ -31,13 +35,33 @@
             "page_alloc.shuffle=1"
         ];
     };
+
+    # Make sure we load the encryption key for the container volume
+    # before we mount it but after sops is ready
+    systemd.services."zfs-load-xmpp-key" = let
+        # TODO make this less hacky
+        dataset =
+            if hostname == "test"
+            then "zboot/local/containers/xmpp"
+            else "zdata/local/containers/xmpp";
+
+        zfsLoadXmppKey = pkgs.writeShellScript "zfs-load-xmpp-key" ''
+            set -e
+            zfs=${lib.getExe pkgs.zfs}
+            ks=$("$zfs" get -Ho value keystatus ${dataset})
+            if [ "$ks" != "available" ]; then
+                "$zfs" load-key ${dataset}
+            fi
+        '';
+    in {
+        requiredBy = [ "var-lib-nixos\\x2dcontainers-xmpp.mount" ];
+        requires = [ "sops-install-secrets.service" "sops-install-secrets-for-users.service" ];
+        before = [ "var-lib-nixos\\x2dcontainers-xmpp.mount" ];
+        after = [ "sops-install-secrets.service" "sops-install-secrets-for-users.service" "zfs-import.target" ];
+        serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            ExecStart = zfsLoadXmppKey;
+        };
+    };
 }
-
-# More work needs to be done if I want to enable secure boot.
-# Here's a quick summary of what I need to do:
-# sudo nix-shell -p sbctl
-# sudo sbctl create-keys
-# Clear all the secure boot keys in the UEFI and enable secure boot there
-# sudo sbctl enroll-keys --microsoft
-# Re-enable secure boot in UEFI if needed
-
