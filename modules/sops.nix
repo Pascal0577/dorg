@@ -5,7 +5,7 @@
         defaultSopsFile = ../secrets/${hostname}.yaml;
         defaultSopsFormat = "yaml";
 
-        age.keyFile = "/var/lib/sops-nix/key.txt";
+        age.keyFile = "/var/lib/sops-nix/keys.txt";
 
         secrets = {
             "password" = {
