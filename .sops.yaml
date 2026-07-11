@@ -1,9 +1,15 @@
 keys:
   - &admin_pascal age1t4j0nk2vazgqz2gjulh972kfgjt0awnvd6w6tvvafgkkytpv03us5am70c
   - &host_quill age1960pncsvrglepsagauzkwhdvyhp9qrtwd4c0k23hm9p7xsnjqpaqf7zuq9
+  - &host_test age1pw7dkpmxyj3nq20wck7a359aakeanfyevmrpcyd4cecrg60dm4ss0a2mpg
 creation_rules:
   - path_regex: secrets/quill\.(yaml|json|env|ini)$
     key_groups:
       - age:
           - *admin_pascal
           - *host_quill
+  - path_regex: secrets/test\.(yaml|json|env|ini)$
+    key_groups:
+      - age:
+          - *admin_pascal
+          - *host_test
