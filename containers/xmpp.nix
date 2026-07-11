@@ -42,16 +42,6 @@ in
         };
     };
 
-    # Make sure root in container has proper perms
-    systemd.services."container@xmpp".serviceConfig.ExecStartPre = [
-        "${pkgs.writeShellScript "xmpp-container-chown" ''
-            set -e
-            DIR=/var/lib/nixos-containers/xmpp
-            mkdir -p "$DIR"
-            chown -R ${lib.toString uidOffset}:${lib.toString uidOffset} "$DIR"
-        ''}"
-    ];
-
     containers.xmpp = {
         autoStart = true;
         ephemeral = false;
@@ -61,6 +51,7 @@ in
         hostAddress = "10.0.0.1";
         localAddress = "10.0.0.2";
         specialArgs = { inherit hardening; };
+        extraFlags = [ "--private-users-ownership=auto" ];
 
         bindMounts = {
             "/certs" = {
