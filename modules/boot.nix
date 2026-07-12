@@ -6,7 +6,7 @@
     boot = {
         # don't try to decrypt volumes yet
         # the secrets managed by sops aren't on the filesystem yet
-        zfs.requestEncryptionCredentials = "false";
+        zfs.requestEncryptionCredentials = false;
 
         initrd.systemd.enable = true;
         supportedFilesystems = [ "zfs" ];
