@@ -79,6 +79,7 @@
 
         nixosModules = {
             security = { imports = securityModules; };
+            matrix = { imports = [ ./modules/matrix.nix ]; };
             xmpp = {
                 imports = [ ./containers/xmpp.nix ];
                 _module.args.xmppFlake = self;
