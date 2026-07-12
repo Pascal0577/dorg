@@ -18,6 +18,12 @@
                 owner = "root";
                 mode = "0400";
             };
+
+            "matrix_env_vars" = {
+                path = "/run/secrets/matrix-tuwunel.env";
+                owner = "tuwunel";
+                mode = "0400";
+            };
         };
     };
 }

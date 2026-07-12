@@ -31,6 +31,7 @@ in
 
     services.matrix-tuwunel = {
         enable = true;
+        environmentFile = "/run/secrets/matrix-tuwunel.env";
 
         settings.global = {
             server_name = domain;
@@ -40,7 +41,6 @@ in
             allow_federation = false;
 
             allow_registration = true;
-            registration_token = "my_string";
             allow_encryption = true;
 
             max_request_size = 50 * 1024 * 1024;
