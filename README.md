@@ -147,7 +147,7 @@ nixos-rebuild switch --flake .#<hostname> --target-host dorg@<ip-address> --ask-
 To install/deploy for the first time on a machine:
 
 ```bash
-nix build .#deploy-<hostname> && ./result <ip-address>
+nix run .#deploy-<hostname> -- <ip-address>
 ```
 
 ## Add a new host if needed

@@ -38,7 +38,7 @@
             ] ++ sharedModules;
         };
 
-        mkDeployment = hostname: pkgs.writeShellScript "deploy-${hostname}" ''
+        mkDeployment = hostname: pkgs.writeShellScriptBin "deploy-${hostname}" ''
             set -e
             ip_addr="$1"
 
