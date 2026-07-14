@@ -40,7 +40,24 @@
 
         mkDeployment = hostname: pkgs.writeShellScriptBin "deploy-${hostname}" ''
             set -e
-            ip_addr="$1"
+            PORT=22
+            IP_ADDR=""
+
+            while [ $# -gt 0 ]; do
+                case "$1" in
+                    -p)
+                        PORT="$2"
+                        shift 2
+                        ;;
+                    *)
+                        IP_ADDR="$1"
+                        shift
+                        ;;
+                esac
+            done
+
+            [ -z "$IP_ADDR" ] && { echo "NO IP ADDRESS FOR INSTALLATION SPECIFIED"; exit 1; }
+            [ -z "$PORT" ] && { echo "NO PORT FOR INSTALLATION SPECIFIED"; exit 1; }
 
             sops_path=${lib.getExe pkgs.sops}
             nixos_anywhere=${nixos-anywhere.packages.x86_64-linux.default}/bin/nixos-anywhere
@@ -55,7 +72,8 @@
                 --flake .#${hostname} \
                 --phases kexec,disko \
                 --disk-encryption-keys /run/zfs_xmpp.key <(echo "$zfs_key") \
-                --target-host root@"$ip_addr"
+                --target-host root@"$IP_ADDR" \
+                --ssh-port "$PORT"
 
             age_key=$("$sops_path" -d --extract '["age_key"]' secrets/${hostname}.yaml)
             if [ -z "$age_key" ]; then
@@ -63,13 +81,14 @@
                 exit 1
             fi
 
-            echo "$age_key" | ssh root@"$ip_addr" \
+            echo "$age_key" | ssh root@"$IP_ADDR" -p "$PORT" \
                 'mkdir -p /mnt/var/lib/sops-nix && cat > /mnt/var/lib/sops-nix/keys.txt && chmod 600 /mnt/var/lib/sops-nix/keys.txt'
 
             "$nixos_anywhere" \
                 --flake .#${hostname} \
                 --phases install,reboot \
-                --target-host root@"$ip_addr"
+                --target-host root@"$IP_ADDR" \
+                --ssh-port "$PORT"
         '';
     in {
         nixosConfigurations = lib.readDir ./systems
